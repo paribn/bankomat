@@ -6,9 +6,19 @@ let salary = 1500;
 
 let transactions = [];
 
-let userPin = prompt('add your pin');
+let userPin = prompt('Enter your 4-digit PIN:');
 pin = userPin;
 
+while (true) {
+    // let userPin = prompt('Enter your 4-digit PIN:');
+
+    if (/^\d{4}$/.test(userPin)) { 
+        pin = userPin;
+        break;
+    } else {
+        alert('PIN must be 4 digits. Please try again.');
+    }
+}
 
 while (tryCount > 0) {
     let loginPin = prompt('add pin for login');
@@ -21,7 +31,7 @@ while (tryCount > 0) {
         tryCount--;
         console.log(`${tryCount} chance remained`);
         if (tryCount === 0) {
-            console.error('Your card blocked.Contact the bank')
+            console.error('Your card is blocked.Contact the bank')
         }
     }
 }
@@ -29,7 +39,8 @@ while (tryCount > 0) {
 function withDraw() {
     let hasShowedCredit;
     let newOffer;
-    let amount = Math.abs(Number(prompt('add you want cash')));
+
+    let amount = Math.abs(Number(prompt('How much cash do you want to withdraw?')));
     if (amount <= balance) {
         balance -= amount;
 
@@ -41,16 +52,17 @@ function withDraw() {
         transactions.push(trObj)
 
         console.log('Your balance:', balance);
-        if (balance == 0 && !hasCredit) {
-            hasShowedCredit = confirm('You want credit?')
+        if (balance == 0 && !hasCredit && !hasShowedCredit) { //
+            hasShowedCredit = confirm('You want credit?') 
+
             if (hasShowedCredit) {
                 let result = calculateCredit(salary);
                 console.log(`Max amount:${result.maxCreditAmount},monthly payment: ${result.monthlyPayment}`);
-                const hasAcceptedCredit = confirm('Do you agree offer?')
+                const hasAcceptedCredit = confirm('Do you accept the credit offer?')
                 if (hasAcceptedCredit) {
                     balance += result.maxCreditAmount;
                     let trObjCredit = {
-                        amount: amount,
+                        amount: result.maxCreditAmount,
                         date: new Date(),
                         deposit: true
                     }
@@ -58,24 +70,30 @@ function withDraw() {
                     transactions.push(trObjCredit)
 
                     hasCredit = true;
-                    console.log('credit added balance:', balance);
+                    console.log('Credit added balance:', balance);
                 } else {
-                    newOffer = confirm('Do you want to listen to other offers?'); ///yes dese elave sert yaz alerte cixardin sert ver ve yeni 8faizlik teklifi ireli sur
-                    if (newOffer) {
-                        let resultt = calculateNewOffer(salary);
-                        console.log(`Max amount:${resultt.maxCreditAmount},monthly payment: ${resultt.monthlyPayment}`);
-                        const hasAcceptedNewOffer = confirm('Do you agree offer?')
-                        if (hasAcceptedNewOffer) {
-                            balance += resultt.maxCreditAmount;
-                            hasCredit = true;
-                            console.log('credit added balance:', balance);
-                        } else {
-                            console.log("son teklif");
-                        }
-                    }
+                    newOffer = confirm('Do you want to listen to other offers?');
+                   
                 }
             }
         }
+        if (newOffer) {
+            let resultt = calculateNewOffer(salary);
+            console.log(`Max amount:${resultt.maxCreditAmount},monthly payment: ${resultt.monthlyPayment}`);
+            const hasAcceptedNewOffer = confirm('Do you agree offer?')
+            if (hasAcceptedNewOffer) {
+                balance += resultt.maxCreditAmount;
+                hasCredit = true;
+                console.log('Credit added balance:', balance);
+            } else {
+               
+                    console.log("No more offers available.");
+                    
+                
+
+            }
+        }
+
     } else {
         console.info('There is not enough money in your balance')
     }
@@ -85,8 +103,7 @@ function withDraw() {
         withDraw();
     }
     else {
-
-        let operation = prompt('With balance: B, with transaction: T')
+        let operation = prompt('Check balance: B, Show transactions: T')
 
         switch (operation) {
             case 'B':
@@ -97,8 +114,7 @@ function withDraw() {
                 break;
         }
 
-
-        console.log('Thanks');
+        console.log('Thank you for using our ATM.');
     }
 
 }
@@ -133,11 +149,9 @@ function ShowTransations() {
         let trDate = `${date.getDate()} - ${date.getMonth()}- ${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 
 
-        document.write(`Amount:${tr.amount}, Date: ${trDate},${tr.deposit ? 'Medaxil' : 'Mexaric'}` + '<br/>') 
+        document.write(`Amount:${tr.amount}, Date: ${trDate}- ${tr.deposit ? 'Medaxil' : 'Mexaric'}` + '<br/>') 
 
     });
 }
 
 
-
-// tamamlanmayan metod var newOffer 
